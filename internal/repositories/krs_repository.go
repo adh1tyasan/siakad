@@ -35,7 +35,9 @@ func TambahDetailKRS(krsID uint, detail *models.KRSDetail, totalSKSBaru int) err
 	}
 
 	//Update total SKS di tabel induk KRS
-	if err := tx.Model(&models.KRS{}).Where("id = ?", krsID).Update("total_sks = ?", totalSKSBaru).Error; err != nil {
+	if err := tx.Model(&models.KRS{}).Where("id = ?", krsID).Updates(map[string]any{
+		"total_sks": totalSKSBaru,
+	}).Error; err != nil {
 		tx.Rollback()
 		return err
 	}
