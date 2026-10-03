@@ -12,3 +12,7 @@ func GetUserByUsername(username string) (*models.User, error) {
 	err := config.DB.Preload("Role").Where("username = ?", username).First(&user).Error
 	return &user, err
 }
+
+func CreateUser(user *models.User) error {
+	return config.DB.Create(user).Error
+}
