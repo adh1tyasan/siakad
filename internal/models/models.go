@@ -58,6 +58,9 @@ type Dosen struct {
 	Nama    string `gorm:"type:varchar(150);not null" json:"nama"`
 	ProdiID uint   `json:"prodi_id"`
 	Prodi   Prodi  `gorm:"foreignKey:ProdiID"`
+
+	// Tambahan opsional: Agar mudah menarik data mahasiswa yang dibimbingnya (Has Many)
+	MahasiswaBimbingan []Mahasiswa `gorm:"foreignKey:DosenPAID" json:"mahasiswa_bimbingan,omitempty"`
 }
 
 type Mahasiswa struct {
@@ -69,6 +72,10 @@ type Mahasiswa struct {
 	ProdiID uint   `json:"prodi_id"`
 	Prodi   Prodi  `gorm:"foreignKey:ProdiID"`
 	Kelas   string `gorm:"type:varchar(20)" json:"kelas"`
+
+	//Tambahan untuk dosen Pembimbing akademik
+	DosenPAID *uint  `json:"dosen_pa_id"`
+	DosenPA   *Dosen `gorm:"foreignKey:DosenPAID" json:"dosen_pa,omitempty"`
 }
 
 // Perkuliahan dan Jadwal
