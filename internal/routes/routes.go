@@ -13,6 +13,7 @@ func SetupRoutes(router *gin.Engine) {
 	//Endpoint public (Tanpa login)
 	auth := api.Group("/auth")
 	{
+		auth.POST("/register", handlers.Register)
 		auth.POST("/login", handlers.Login)
 	}
 
@@ -29,9 +30,8 @@ func SetupRoutes(router *gin.Engine) {
 				"user_id": userID,
 				"role":    role,
 			})
-
 		})
-
+		protected.POST("/krs/tambah", handlers.TambahMataKuliahKRS)
 		//Contoh endpoint yang bisa diakses oleh ADMIN
 		adminOnly := protected.Group("/admin")
 		adminOnly.Use(middleware.RequireRole("admin"))
@@ -71,6 +71,21 @@ func SetupRoutes(router *gin.Engine) {
 			adminOnly.GET("/kelas", handlers.GetAllKelas)
 			adminOnly.PUT("/kelas/:id", handlers.UpdateKelas)
 			adminOnly.DELETE("kelas/:id", handlers.DeleteKelas)
+		}
+		mahasiswaOnly := protected.Group("/mahasiswa")
+		mahasiswaOnly.Use(middleware.RequireRole("mahasiswa"))
+		{
+			mahasiswaOnly.POST("/krs/:id/submit", handlers.SubmitKRS)
+		}
+		dosenOnly := protected.Group("/dosen")
+		dosenOnly.Use(middleware.RequireRole("dosen"))
+		{
+			dosenOnly.PUT("/krs/:id/review-pa", handlers.ReviewKRSByPA)
+		}
+		kaprodiOnly := protected.Group("/kaprodi")
+		kaprodiOnly.Use(middleware.RequireRole("kaprodi", "admin"))
+		{
+			kaprodiOnly.PUT("/krs/:id/review-kaprodi", handlers.ReviewKRSByKaprodi)
 		}
 	}
 }
