@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 	"siakad/internal/repositories"
+	"siakad/internal/services"
 	"siakad/internal/utils"
 
 	"github.com/gin-gonic/gin"
@@ -61,5 +62,29 @@ func Login(c *gin.Context) {
 			"token": token,
 			"role":  user.Role.Name,
 		},
+	})
+}
+
+func Register(ctx *gin.Context) {
+	var req services.RegisterRequest
+
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"succes":  false,
+			"message": "Format salah. Pastikan menyertakan username, password (min 6 karakter), dan role_id",
+		})
+		return
+	}
+	if err := services.RegisterUser(req); err != nil {
+		ctx.JSON(http.StatusConflict, gin.H{
+			"success": false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusCreated, gin.H{
+		"success": true,
+		"message": "Registrasi berhasil, silakan login",
 	})
 }
