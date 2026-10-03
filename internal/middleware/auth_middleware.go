@@ -61,7 +61,7 @@ func RequireRole(roles ...string) gin.HandlerFunc {
 		if !exist {
 			c.JSON(http.StatusForbidden, gin.H{
 				"succes":  false,
-				"message": "akses ditolah",
+				"message": "akses ditolak",
 			})
 			c.Abort()
 			return
