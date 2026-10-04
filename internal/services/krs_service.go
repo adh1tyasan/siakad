@@ -105,3 +105,19 @@ func PersetujuanKaprodi(krsID uint, status, catatan string) error {
 	}
 	return repositories.UpdateStatusKRS(krsID, status, catatan)
 }
+
+func GetKRSMahasiswa(userID uint) ([]models.KRS, error) {
+	//1.Cari data mahasiswa dari user_id yang sedang login
+	mhs, err := repositories.GetMahasiswaByUserID(userID)
+	if err != nil {
+		return nil, errors.New("Data Mahasiswa Tidak ditemukan Untuk Akun ini")
+	}
+
+	//2 Ambil data KRS dengan Detail Krsnya
+	krs, err := repositories.GetKRSByMahasiswaID(mhs.ID)
+	if err != nil {
+		return nil, errors.New("Gagal mengambil data KRS" + err.Error())
+	}
+
+	return krs, nil
+}
