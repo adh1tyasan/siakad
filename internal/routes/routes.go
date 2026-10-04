@@ -76,6 +76,7 @@ func SetupRoutes(router *gin.Engine) {
 		mahasiswaOnly.Use(middleware.RequireRole("mahasiswa"))
 		{
 			mahasiswaOnly.POST("/krs/:id/submit", handlers.SubmitKRS)
+			mahasiswaOnly.GET("/krs", handlers.GetMyKRS)
 		}
 		dosenOnly := protected.Group("/dosen")
 		dosenOnly.Use(middleware.RequireRole("dosen"))
