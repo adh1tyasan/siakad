@@ -51,3 +51,9 @@ func DeleteMahasiswa(id uint) error {
 	//Menghapus data mahasiswa. GORM otomatis melakukan soft delete
 	return config.DB.Delete(&models.Mahasiswa{}, id).Error
 }
+
+func GetMahasiswaByUserID(userID uint) (*models.Mahasiswa, error) {
+	var mhs models.Mahasiswa
+	err := config.DB.Where("user_id = ?", userID).First(&mhs).Error
+	return &mhs, err
+}
