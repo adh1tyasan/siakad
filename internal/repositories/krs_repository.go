@@ -56,3 +56,18 @@ func UpdateStatusKRS(id uint, status, catatan string) error {
 		"catatan": catatan,
 	}).Error
 }
+
+func GetKRSByMahasiswaID(mahasiswaID uint) ([]models.KRS, error) {
+	var krs []models.KRS
+
+	err := config.DB.
+		Preload("TahunAkademik").
+		Preload("KRSDetail").
+		Preload("KRSDetail.Jadwal").
+		Preload("KRSDetail.Jadwal.MataKuliah").
+		Preload("KRSDetail.Jadwal.Dosen").
+		Preload("KRSDetail.Jadwal.Ruangan").
+		Where("mahasiswa_id = ?", mahasiswaID).Find(&krs).Error
+	return krs, err
+
+}
