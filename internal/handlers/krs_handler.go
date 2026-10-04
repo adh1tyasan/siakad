@@ -101,3 +101,34 @@ func TambahMataKuliahKRS(ctx *gin.Context) {
 		"message": "Jadwal Berhasil ditambahkan ke KRS",
 	})
 }
+
+func GetMyKRS(ctx *gin.Context) {
+	//1.Ambil useer_id dari JWT yang sedang login(diset di middlewar)
+	userIDContext, exist := ctx.Get("user_id")
+	if !exist {
+		ctx.JSON(http.StatusUnauthorized, gin.H{
+			"succes":  false,
+			"message": "User ID tidak ditemukan di Token",
+		})
+		return
+	}
+
+	//Konversi tipe bawaan jwt float64 ke uint
+	userID := uint(userIDContext.(float64))
+
+	//2 Panggil Services
+	krsData, err := services.GetKRSMahasiswa(userID)
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"succes":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	//3 Tampilkan data
+	ctx.JSON(http.StatusOK, gin.H{
+		"succes":  true,
+		"messege": "Berhasil ambil data KRS",
+		"data":    krsData,
+	})
+}
