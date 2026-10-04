@@ -85,7 +85,7 @@ func PersetujuanPA(krsID uint, status, catatan string) error {
 	if krs.Status != "Diajukan" {
 		return errors.New("KRS Belum diajukan Mahasiswa atau Sudah diproses")
 	}
-	if krs.Status != "Disetujui PA" && krs.Status != "Ditolah" {
+	if status != "Disetujui PA" && krs.Status != "Ditolak" {
 		return errors.New("Status tidak valid. Gunakan 'Disetujui PA' atau 'Ditolak'")
 	}
 	return repositories.UpdateStatusKRS(krsID, status, catatan)
@@ -100,7 +100,7 @@ func PersetujuanKaprodi(krsID uint, status, catatan string) error {
 	if krs.Status != "Disetujui PA" {
 		return errors.New("KRS Harus disetujui Dosen PA terlebih dahulu")
 	}
-	if krs.Status != "Disetujui Kaprodi" && krs.Status != "Ditolal" {
+	if status != "Disetujui Kaprodi" && krs.Status != "Ditolal" {
 		return errors.New("Status tidak valid. Gunakan 'Disetujui Kaprodi' atau 'Ditolak'")
 	}
 	return repositories.UpdateStatusKRS(krsID, status, catatan)
