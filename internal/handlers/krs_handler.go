@@ -9,7 +9,7 @@ import (
 )
 
 type ReviewKRSRequest struct {
-	Status  string `json:"status" binding:"request"`
+	Status  string `json:"status" binding:"required"`
 	Catatan string `json:"catatan"`
 }
 
