@@ -178,3 +178,23 @@ type Pengumuman struct {
 	PenulisID uint   `json:"penulis_id"`
 	Penulis   User   `gorm:"foreignKey:PenulisID"`
 }
+
+// Model untuk mencatat sesi kelas (Dosen mengajar)
+type Pertemuan struct {
+	BaseModel
+	JadwalID    uint   `json:"jadwal_id"`
+	Jadwal      Jadwal `gorm:"foreignKey:JadwalID"`
+	PertemuanKe int    `json:"pertemuan_ke"`             // Contoh: Pertemuan 1, 2, 3...
+	Tanggal     string `gorm:"type:date" json:"tanggal"` // Format: YYYY-MM-DD
+	Materi      string `gorm:"type:text" json:"materi"`  // Materi yang diajarkan hari itu
+}
+
+// Model untuk mencatat kehadiran tiap mahasiswa di sesi tersebut
+type Absensi struct {
+	BaseModel
+	PertemuanID uint      `json:"pertemuan_id"`
+	Pertemuan   Pertemuan `gorm:"foreignKey:PertemuanID"`
+	MahasiswaID uint      `json:"mahasiswa_id"`
+	Mahasiswa   Mahasiswa `gorm:"foreignKey:MahasiswaID"`
+	Status      string    `gorm:"type:varchar(10)" json:"status"` // Hadir, Izin, Sakit, Alpa
+}
