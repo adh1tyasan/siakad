@@ -82,6 +82,8 @@ func SetupRoutes(router *gin.Engine) {
 		dosenOnly.Use(middleware.RequireRole("dosen"))
 		{
 			dosenOnly.PUT("/krs/:id/review-pa", handlers.ReviewKRSByPA)
+			dosenOnly.POST("/absensi", handlers.InputAbsensi)
+			dosenOnly.PUT("/absensi/:id", handlers.UpdateAbsensi)
 		}
 		kaprodiOnly := protected.Group("/kaprodi")
 		kaprodiOnly.Use(middleware.RequireRole("kaprodi", "admin"))
