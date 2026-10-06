@@ -64,3 +64,31 @@ func UpdateAbsensi(ctx *gin.Context) {
 		"message": "Data Absensi berhasil diperbarui",
 	})
 }
+
+func GetRekapAbsensi(ctx *gin.Context) {
+	//AMbil id dari  TOKEN JWT
+	userIDContext, exists := ctx.Get("user_id")
+	if !exists {
+		ctx.JSON(http.StatusUnauthorized, gin.H{
+			"succes":  false,
+			"message": "Akses ditolak, token tidak valid",
+		})
+		return
+	}
+
+	userID := uint(userIDContext.(float64))
+	//Panggil Service
+	rekapData, err := services.GetRekapAbsensiMahasiswa(userID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"succes":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{
+		"succes":  true,
+		"message": "Berhasil mengambil rekap absensi",
+		"data":    rekapData,
+	})
+}

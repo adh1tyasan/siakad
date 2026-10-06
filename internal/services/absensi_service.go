@@ -21,6 +21,15 @@ type InputAbsensiRequest struct {
 	DataAbsem   []AbsensiDetailReq `json:"data_absen" binding:"required"`
 }
 
+type RekapAbsensiResponse struct {
+	MataKuliah     string `json:"mata_kuliah"`
+	Hadir          int    `json:"hadir"`
+	Izin           int    `json:"izin"`
+	Sakit          int    `json:"sakit"`
+	Alpa           int    `json:"alpa"`
+	TotalPertemuan int    `json:"total_pertemuan"`
+}
+
 type UpdateAbsensiRequest struct {
 	Tanggal   string             `json:"tanggal" binding:"required"`
 	Materi    string             `json:"materi" binding:"required"`
@@ -79,4 +88,51 @@ func ProsesUpdateAbsensi(pertemuanID uint, req UpdateAbsensiRequest) error {
 		}
 	}
 	return nil
+}
+
+func GetRekapAbsensiMahasiswa(userID uint) ([]RekapAbsensiResponse, error) {
+	//cari profile mahasiswa Berdasarkan token login
+	mhs, err := repositories.GetMahasiswaByUserID(userID)
+	if err != nil {
+		return nil, errors.New("Data mahasiswa tidak ditemukan")
+	}
+
+	//Tarik semua data absensi nya
+	listAbsensi, err := repositories.GetAbsensiByMahasiswaID(mhs.ID)
+	if err != nil {
+		return nil, errors.New("Gagal mengambil data absensi: " + err.Error())
+	}
+
+	// Kelompokkan dan hitung per matakuliah pakai map
+	rekapMap := make(map[uint]*RekapAbsensiResponse)
+
+	for _, absen := range listAbsensi {
+		mk := absen.Pertemuan.Jadwal.MataKuliah
+		mkID := mk.ID
+
+		//jika mata kuliah tidak ada di map, maka buatkan kerangkanya
+		if _, exist := rekapMap[mkID]; !exist {
+			rekapMap[mkID] = &RekapAbsensiResponse{
+				MataKuliah: mk.Nama,
+			}
+		}
+		rekapMap[mkID].TotalPertemuan++
+		switch absen.Status {
+		case "Hadir":
+			rekapMap[mkID].Hadir++
+		case "Izin":
+			rekapMap[mkID].Izin++
+		case "Sakit":
+			rekapMap[mkID].Sakit++
+		case "Alpa":
+			rekapMap[mkID].Alpa++
+		}
+	}
+
+	//Ubah format map menjadi Array/Slice agar bagus saat jadi JSON
+	var result []RekapAbsensiResponse
+	for _, v := range rekapMap {
+		result = append(result, *v)
+	}
+	return result, nil
 }

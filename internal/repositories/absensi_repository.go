@@ -32,3 +32,14 @@ func UpdateStatusAbsensi(pertemuanID uint, mahasiswaID uint, status string) erro
 	//Update Spesifik ke mahasiswa tertentu di pertemuan
 	return config.DB.Model(&models.Absensi{}).Where("pertemuan_id = ? AND mahasiswa_id = ?", pertemuanID, mahasiswaID).Update("status", status).Error
 }
+
+func GetAbsensiByMahasiswaID(mahasiswaID uint) ([]models.Absensi, error) {
+	var listAbsensi []models.Absensi
+	err := config.DB.
+		Preload("Pertemuan").
+		Preload("Pertemuan.Jadwal").
+		Preload("Pertemuan.Jadwal.MataKuliah").
+		Where("mahasiswa_id = ? ", mahasiswaID).
+		Find(&listAbsensi).Error
+	return listAbsensi, err
+}
