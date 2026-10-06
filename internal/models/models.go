@@ -130,10 +130,16 @@ type KRS struct {
 
 type KRSDetail struct {
 	BaseModel
-	KRSID    uint   `gorm:"uniqueIndex:idx_krs_jadwal" json:"krs_id"`
-	KRS      KRS    `gorm:"foreignKey:KRSID"`
-	JadwalID uint   `gorm:"uniqueIndex:idx_krs_jadwal" json:"jadwal_id"`
-	Jadwal   Jadwal `gorm:"foreignKey:JadwalID"`
+	KRSID      uint    `gorm:"uniqueIndex:idx_krs_jadwal" json:"krs_id"`
+	KRS        KRS     `gorm:"foreignKey:KRSID"`
+	JadwalID   uint    `gorm:"uniqueIndex:idx_krs_jadwal" json:"jadwal_id"`
+	Jadwal     Jadwal  `gorm:"foreignKey:JadwalID"`
+	NilaiTugas float64 `json:"nilai_tugas"`
+	NilaiUTS   float64 `json:"nilai_uts"`
+	NilaiUAS   float64 `json:"nilai_uas"`
+	NilaiAkhir float64 `json:"nilai_akhir"`
+	NilaiHuruf string  `gorm:"type:varchar(2)" json:"nilai_huruf"`
+	BobotNilai float64 `json:"bobot_nilai"`
 }
 
 // Presensi
